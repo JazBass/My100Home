@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Snapshots</string>
+    <string name="home_tittle">Home</string>
+    <string name="home_profile">Profile</string>
+    <string name="home_add">Add</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="post_message_title">Select an image</string>
+    <string name="post_message_valid_title">Add a title please</string>
+</resources>
