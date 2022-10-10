@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -27,6 +28,8 @@ class AddFragment : Fragment() {
 
     private var mPhotoSelectedUri: Uri? = null
 
+    private val EU_WEST_INSTANCE = "https://snapshots-24bdd-default-rtdb.europe-west1.firebasedatabase.app"
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,7 +42,9 @@ class AddFragment : Fragment() {
         mBinding.btnPost.setOnClickListener { postSnapshot() }
         mBinding.btnSelect.setOnClickListener { openGallery() }
         mStorageReference = FirebaseStorage.getInstance().reference
-        mDatabaseReference = FirebaseDatabase.getInstance().reference.child(PATH_SNAPSHOT)
+        mDatabaseReference = FirebaseDatabase
+            .getInstance(EU_WEST_INSTANCE)
+            .reference.child(PATH_SNAPSHOT)
     }
 
     private fun openGallery() {
@@ -50,10 +55,10 @@ class AddFragment : Fragment() {
     private fun postSnapshot() {
         mBinding.progressBar.visibility = View.VISIBLE
 
+        val key = mDatabaseReference.push().key!!
         //Error trying to use global storage reference
-        val storageReference = mStorageReference.child(PATH_SNAPSHOT).child("myPhoto")
-
-        val key = mDatabaseReference.push().key
+        val storageReference = mStorageReference.child(PATH_SNAPSHOT)
+            .child(FirebaseAuth.getInstance().currentUser!!.uid).child(key)
 
         if (mPhotoSelectedUri != null) {
             storageReference.putFile(mPhotoSelectedUri!!)
@@ -68,7 +73,7 @@ class AddFragment : Fragment() {
                 .addOnSuccessListener {
                     Snackbar.make(mBinding.root, "Photo published", Snackbar.LENGTH_SHORT).show()
                     it.storage.downloadUrl.addOnSuccessListener {
-                        saveSnapfhot(key!!, it.toString(), mBinding.etTitle.text.toString().trim())
+                        saveSnapshot(key, it.toString(), mBinding.etTitle.text.toString().trim())
                         mBinding.tilTitle.visibility = View.GONE
                         mBinding.tvMessage.text = getString(R.string.post_message_title)
                     }
@@ -80,7 +85,7 @@ class AddFragment : Fragment() {
 
     }
 
-    fun saveSnapfhot(key: String, url: String, title: String) {
+    private fun saveSnapshot(key: String, url: String, title: String) {
         val snapshot = Snapshot(title= title, photoUrl = url)
         mDatabaseReference.child(key).setValue(snapshot)
     }
