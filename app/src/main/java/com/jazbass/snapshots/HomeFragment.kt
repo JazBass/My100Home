@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -76,7 +75,13 @@ class HomeFragment : Fragment() {
                 val snapshot = getItem(position)
                 with(holder) {
                     setListener(snapshot)
+
                     binding.tvTitle.text = snapshot.title
+                    binding.cbLike.text = snapshot.likeList.keys.size.toString()
+                    FirebaseAuth.getInstance().currentUser?.let {
+                        binding.cbLike.isChecked = snapshot.likeList
+                            .containsKey(it.uid)
+                    }
                     Glide.with(mContext)
                         .load(snapshot.photoUrl)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
