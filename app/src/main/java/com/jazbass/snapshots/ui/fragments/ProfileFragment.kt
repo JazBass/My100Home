@@ -1,4 +1,4 @@
-package com.jazbass.snapshots
+package com.jazbass.snapshots.ui.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

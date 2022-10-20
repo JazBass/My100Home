@@ -1,4 +1,4 @@
-package com.jazbass.snapshots
+package com.jazbass.snapshots.entities
 
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties

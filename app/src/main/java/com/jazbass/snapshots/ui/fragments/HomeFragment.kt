@@ -1,4 +1,4 @@
-package com.jazbass.snapshots
+package com.jazbass.snapshots.ui.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -14,21 +14,25 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.jazbass.snapshots.utils.HomeAux
+import com.jazbass.snapshots.R
+import com.jazbass.snapshots.SnapshotsApplication
+import com.jazbass.snapshots.entities.Snapshot
 import com.jazbass.snapshots.databinding.FragmentHomeBinding
 import com.jazbass.snapshots.databinding.ItemSnapshotBinding
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), HomeAux {
 
     private lateinit var mBinding: FragmentHomeBinding
 
     private lateinit var mFirebaseAdapter: FirebaseRecyclerAdapter<Snapshot, SnapshotHolder>
     private lateinit var mLayoutManager: RecyclerView.LayoutManager
-
-    private val EU_WEST_INSTANCE =
-        "https://snapshots-24bdd-default-rtdb.europe-west1.firebasedatabase.app"
+    private lateinit var mSnapshotsReference: DatabaseReference
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,10 +44,22 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpFirebase()
+        setUpAdapter()
+        setUpRecyclerView()
+    }
+
+    private fun setUpFirebase(){
+
+        mSnapshotsReference = FirebaseDatabase.getInstance().reference.child(SnapshotsApplication.PATH_SNAPSHOTS)
+
+    }
+
+    private fun setUpAdapter(){
 
         //Rama snapshots, reference(raiz).child(rama = snapshots)
         val query = FirebaseDatabase
-            .getInstance(EU_WEST_INSTANCE)
+            .getInstance(SnapshotsApplication.EU_WEST_INSTANCE)
             .reference.child("snapshot")
 
         //Customize the adapter for use the registrer key like id
@@ -101,7 +117,9 @@ class HomeFragment : Fragment() {
                 Toast.makeText(mContext, error.message, Toast.LENGTH_SHORT).show()
             }
         }
+    }
 
+    private fun setUpRecyclerView(){
         mLayoutManager = LinearLayoutManager(context)
 
         mBinding.recyclerView.apply {
@@ -110,6 +128,8 @@ class HomeFragment : Fragment() {
             adapter = mFirebaseAdapter
         }
     }
+
+
 
     override fun onStart() {
         super.onStart()
@@ -121,15 +141,24 @@ class HomeFragment : Fragment() {
         mFirebaseAdapter.stopListening()
     }
 
-    //
+    override fun goToTop() {
+        mBinding.recyclerView.smoothScrollToPosition(0)
+    }
+
     private fun deleteSnapshot(snapshot: Snapshot) {
-        val databaseReference =
-            FirebaseDatabase.getInstance(EU_WEST_INSTANCE).reference.child("snapshot")
-        databaseReference.child(snapshot.id).removeValue()
+        context?.let {
+            MaterialAlertDialogBuilder(it)
+                .setTitle(R.string.dialog_delete_title)
+                .setPositiveButton(R.string.dialog_delete_confirm) { _, _ ->
+                    mSnapshotsReference.child(snapshot.id).removeValue()
+                }
+                .setNegativeButton(R.string.dialog_delete_cancel, null)
+                .show()
+        }
     }
 
     private fun setLike(snapshot: Snapshot, checked: Boolean) {
-        val databaseReference = FirebaseDatabase.getInstance(EU_WEST_INSTANCE)
+        val databaseReference = FirebaseDatabase.getInstance(SnapshotsApplication.EU_WEST_INSTANCE)
             .reference.child("snapshot")
         if (checked){
             databaseReference.child(snapshot.id).child("likeList")

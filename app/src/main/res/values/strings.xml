@@ -7,4 +7,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="post_message_title">Select an image</string>
     <string name="post_message_valid_title">Add a title please</string>
+    <string name="post_message_fail_image_post">Fail uploading image</string>
+    <string name="post_message_post_success">Image upload succesfull</string>
+    <string name="dialog_delete_title">Delete photo?</string>
+    <string name="dialog_delete_confirm">Delete</string>
+    <string name="dialog_delete_cancel">Cancel</string>
 </resources>

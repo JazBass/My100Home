@@ -1,23 +1,26 @@
-package com.jazbass.snapshots
+package com.jazbass.snapshots.ui
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentOnAttachListener
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.jazbass.snapshots.utils.HomeAux
+import com.jazbass.snapshots.ui.fragments.HomeFragment
+import com.jazbass.snapshots.ui.fragments.ProfileFragment
+import com.jazbass.snapshots.R
 import com.jazbass.snapshots.databinding.ActivityMainBinding
-import org.w3c.dom.NameList
-import java.util.*
+import com.jazbass.snapshots.ui.fragments.AddFragment
+import com.jazbass.snapshots.utils.MainAux
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MainAux {
 
-    private lateinit var mainBinding: ActivityMainBinding
+    private lateinit var mBinding: ActivityMainBinding
 
     private lateinit var mAuthListener: FirebaseAuth.AuthStateListener
     private var mFirebaseAuth: FirebaseAuth? = null
@@ -26,10 +29,20 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mActiveFragment: Fragment
     private lateinit var mFragmentManager: FragmentManager
 
+    private val authResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if (it.resultCode == RESULT_OK){
+            Toast.makeText(this, "Welcome", Toast.LENGTH_SHORT).show()
+        }else{
+            if (IdpResponse.fromResultIntent(it.data)==null){
+                finish()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mainBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(mainBinding.root)
+        mBinding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(mBinding.root)
         setUpAuth()
         setUpBottomNav()
     }
@@ -37,17 +50,15 @@ class MainActivity : AppCompatActivity() {
     private fun setUpAuth() {
         mFirebaseAuth = FirebaseAuth.getInstance()
         mAuthListener = FirebaseAuth.AuthStateListener {
-            val user = it.currentUser
-            if (user == null) {
-                startActivityForResult(
-                    AuthUI.getInstance().createSignInIntentBuilder()
-                        .setAvailableProviders(
-                            Arrays.asList(
-                                AuthUI.IdpConfig.EmailBuilder().build(),
-                                AuthUI.IdpConfig.GitHubBuilder().build(),
-                                AuthUI.IdpConfig.GoogleBuilder().build()
-                            )
-                        ).build(), RC_SIGN_IN)
+            if (it.currentUser == null) {
+                authResult.launch(AuthUI.getInstance().createSignInIntentBuilder()
+                    .setAvailableProviders(
+                        listOf(
+                            AuthUI.IdpConfig.EmailBuilder().build(),
+                            AuthUI.IdpConfig.GitHubBuilder().build(),
+                            AuthUI.IdpConfig.GoogleBuilder().build()
+                        )
+                    ).build())
             }
         }
     }
@@ -70,7 +81,7 @@ class MainActivity : AppCompatActivity() {
         mFragmentManager.beginTransaction()
             .add(R.id.host_fragment, homeFragment, HomeFragment::class.java.name).commit()
 
-        mainBinding.bottomNav.setOnNavigationItemSelectedListener {
+        mBinding.bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.action_home -> {
                     mFragmentManager.beginTransaction().hide(mActiveFragment).show(homeFragment)
@@ -93,6 +104,11 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+        mBinding.bottomNav.setOnItemReselectedListener {
+            when(it.itemId){
+                R.id.host_fragment -> (homeFragment as HomeAux).goToTop()
+            }
+        }
     }
 
     override fun onResume() {
@@ -104,17 +120,9 @@ class MainActivity : AppCompatActivity() {
         mFirebaseAuth?.removeAuthStateListener(mAuthListener)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_SIGN_IN){
-            //Only the first time cause comes from the intent
-            if (resultCode == RESULT_OK){
-                Toast.makeText(this, "Welcome", Toast.LENGTH_SHORT).show()
-            }else{
-                if (IdpResponse.fromResultIntent(data)==null){
-                    finish()
-                }
-            }
-        }
+    override fun showMessage(resId: Int, duration: Int) {
+        Snackbar.make(mBinding.root, resId, duration)
+            .setAnchorView(mBinding.bottomNav)
+            .show()
     }
 }
