@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
+import com.jazbass.snapshots.R
 import com.jazbass.snapshots.databinding.FragmentProfileBinding
 
 class ProfileFragment : Fragment() {
@@ -25,19 +27,38 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mBinding.tvName.text = FirebaseAuth.getInstance().currentUser?.displayName
-        mBinding.tvEmail.text = FirebaseAuth.getInstance().currentUser?.email
+        setUpButton()
+        refresh()
+    }
 
-        mBinding.btnLogOut.setOnClickListener{signOut()}
+    private fun setUpButton() {
+        mBinding.btnLogOut.setOnClickListener {
+            context?.let {
+                MaterialAlertDialogBuilder(it)
+                    .setTitle(R.string.dialog_logout_title)
+                    .setPositiveButton(R.string.dialog_delete_confirm) { _, _ -> signOut() }
+                    .setNegativeButton(R.string.dialog_delete_cancel, null)
+                    .show()
+            }
+        }
     }
 
     private fun signOut() {
         context?.let {
             AuthUI.getInstance().signOut(it)
-                .addOnSuccessListener {
+                .addOnCompleteListener {
                     Toast.makeText(context, "See you", Toast.LENGTH_SHORT).show()
+                    with(mBinding) {
+                        tvName.text = ""
+                        tvEmail.text = ""
+                    }
                 }
         }
     }
-
+    private fun refresh() {
+        with(mBinding) {
+            tvName.text = FirebaseAuth.getInstance().currentUser?.displayName
+            tvEmail.text = FirebaseAuth.getInstance().currentUser?.email
+        }
+    }
 }

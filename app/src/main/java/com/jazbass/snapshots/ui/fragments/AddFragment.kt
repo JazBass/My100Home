@@ -132,7 +132,6 @@ class AddFragment : Fragment() {
             .addOnCompleteListener { enableUI(true) }
             .addOnFailureListener {
                 mainAux?.showMessage(R.string.post_message_fail_image_post)
-
             }
     }
 

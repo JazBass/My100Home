@@ -19,14 +19,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.jazbass.snapshots.utils.HomeAux
+import com.jazbass.snapshots.utils.FragmentAux
 import com.jazbass.snapshots.R
 import com.jazbass.snapshots.SnapshotsApplication
 import com.jazbass.snapshots.entities.Snapshot
 import com.jazbass.snapshots.databinding.FragmentHomeBinding
 import com.jazbass.snapshots.databinding.ItemSnapshotBinding
 
-class HomeFragment : Fragment(), HomeAux {
+class HomeFragment : Fragment(), FragmentAux {
 
     private lateinit var mBinding: FragmentHomeBinding
 
@@ -141,7 +141,7 @@ class HomeFragment : Fragment(), HomeAux {
         mFirebaseAdapter.stopListening()
     }
 
-    override fun goToTop() {
+    override fun refresh() {
         mBinding.recyclerView.smoothScrollToPosition(0)
     }
 
