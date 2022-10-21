@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(), MainAux {
 
     private fun setUpAuth() {
         mFirebaseAuth = FirebaseAuth.getInstance()
-        mAuthListener = FirebaseAuth.AuthStateListener {
+        mAuthListener = FirebaseAuth.AuthStateListener { it ->
             if (it.currentUser == null) {
                 authResult.launch(
                     AuthUI.getInstance().createSignInIntentBuilder()

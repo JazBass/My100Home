@@ -13,4 +13,5 @@
     <string name="dialog_delete_confirm">Delete</string>
     <string name="dialog_delete_cancel">Cancel</string>
     <string name="dialog_logout_title">Do you want to log out ?</string>
+    <string name="home_delete_photo_error">Error trying to delete the photo</string>
 </resources>

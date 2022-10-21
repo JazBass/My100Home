@@ -11,8 +11,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.jazbass.snapshots.R
 import com.jazbass.snapshots.databinding.FragmentProfileBinding
+import com.jazbass.snapshots.utils.FragmentAux
 
-class ProfileFragment : Fragment() {
+class ProfileFragment : Fragment(), FragmentAux {
 
     private lateinit var mBinding: FragmentProfileBinding
 
@@ -55,7 +56,8 @@ class ProfileFragment : Fragment() {
                 }
         }
     }
-    private fun refresh() {
+
+    override fun refresh() {
         with(mBinding) {
             tvName.text = FirebaseAuth.getInstance().currentUser?.displayName
             tvEmail.text = FirebaseAuth.getInstance().currentUser?.email

@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.contract.ActivityResultContracts
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -86,8 +85,7 @@ class AddFragment : Fragment() {
 
             val key = mDatabaseReference.push().key!!
             //Error trying to use global storage reference
-            val storageReference = mStorageReference.child(SnapshotsApplication.PATH_SNAPSHOTS)
-                .child(FirebaseAuth.getInstance().currentUser!!.uid).child(key)
+            val storageReference = mStorageReference.child(FirebaseAuth.getInstance().currentUser!!.uid).child(key)
 
             storageReference.putFile(mPhotoSelectedUri!!)
                 .addOnProgressListener {
@@ -150,4 +148,5 @@ class AddFragment : Fragment() {
             tilTitle.isEnabled = enable
         }
     }
+
 }
