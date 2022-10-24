@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.jazbass.snapshots.R
@@ -20,7 +21,7 @@ class ProfileFragment : Fragment(), FragmentAux {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         mBinding = FragmentProfileBinding.inflate(inflater, container, false)
         return mBinding.root
     }
@@ -53,6 +54,8 @@ class ProfileFragment : Fragment(), FragmentAux {
                         tvName.text = ""
                         tvEmail.text = ""
                     }
+                    (activity?.findViewById(R.id.bottom_nav) as? BottomNavigationView)?.selectedItemId =
+                        R.id.action_home
                 }
         }
     }

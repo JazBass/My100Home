@@ -59,14 +59,14 @@ class AddFragment : Fragment() {
         setUpFirebase()
     }
 
-    private fun setUpButtons(){
-        with(mBinding){
+    private fun setUpButtons() {
+        with(mBinding) {
             btnPost.setOnClickListener { postSnapshot() }
             btnSelect.setOnClickListener { openGallery() }
         }
     }
 
-    private fun setUpFirebase(){
+    private fun setUpFirebase() {
         mStorageReference = FirebaseStorage.getInstance()
             .reference.child(SnapshotsApplication.PATH_SNAPSHOTS)
         mDatabaseReference = FirebaseDatabase.getInstance(SnapshotsApplication.EU_WEST_INSTANCE)
@@ -85,7 +85,8 @@ class AddFragment : Fragment() {
 
             val key = mDatabaseReference.push().key!!
             //Error trying to use global storage reference
-            val storageReference = mStorageReference.child(FirebaseAuth.getInstance().currentUser!!.uid).child(key)
+            val storageReference =
+                mStorageReference.child(FirebaseAuth.getInstance().currentUser!!.uid).child(key)
 
             storageReference.putFile(mPhotoSelectedUri!!)
                 .addOnProgressListener {
@@ -99,7 +100,7 @@ class AddFragment : Fragment() {
                     mBinding.progressBar.visibility = View.INVISIBLE
                 }
                 .addOnSuccessListener {
-                    it.storage.downloadUrl.addOnSuccessListener {itUri ->
+                    it.storage.downloadUrl.addOnSuccessListener { itUri ->
                         saveSnapshot(key, itUri.toString(), mBinding.etTitle.text.toString().trim())
                         mBinding.tilTitle.visibility = View.GONE
                         mBinding.tvMessage.text = getString(R.string.post_message_title)
@@ -134,11 +135,9 @@ class AddFragment : Fragment() {
     }
 
     private fun hideKeyboard() {
-        val imm =
-            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        if (view != null) {
-            imm.hideSoftInputFromWindow(requireView().windowToken, 0)
-        }
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(requireView().windowToken, 0)
+
     }
 
     private fun enableUI(enable: Boolean) {

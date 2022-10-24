@@ -157,8 +157,8 @@ class HomeFragment : Fragment(), FragmentAux {
                         .child(SnapshotsApplication.PATH_SNAPSHOTS)
                         .child(SnapshotsApplication.currentUser.uid)
                         .child(snapshot.id)
-                    storageSnapshotsRef.delete().addOnCompleteListener{delete ->
-                        if (delete.isSuccessful){
+                    storageSnapshotsRef.delete().addOnCompleteListener{result ->
+                        if (result.isSuccessful){
                             mSnapshotsReference.child(snapshot.id).removeValue()
                         }else{
                             Snackbar.make(mBinding.root, getString(R.string.home_delete_photo_error),

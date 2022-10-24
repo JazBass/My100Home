@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity(), MainAux {
 
     private lateinit var mAuthListener: FirebaseAuth.AuthStateListener
     private var mFirebaseAuth: FirebaseAuth? = null
-    private val RC_SIGN_IN = 21
 
     private lateinit var mActiveFragment: Fragment
     private var mFragmentManager: FragmentManager? = null

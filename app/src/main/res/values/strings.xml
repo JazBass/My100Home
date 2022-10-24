@@ -14,4 +14,6 @@
     <string name="dialog_delete_cancel">Cancel</string>
     <string name="dialog_logout_title">Do you want to log out ?</string>
     <string name="home_delete_photo_error">Error trying to delete the photo</string>
+    <string name="image_button_content">Button for delete posts</string>
+    <string name="image_content">Post image</string>
 </resources>
